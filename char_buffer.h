@@ -12,14 +12,14 @@
 typedef struct //Tipo de dato char_buffer_t: buffer circular de caracteres
 {
     char * start;       //Direccion inicial del buffer
-    uint16_t size;      //Numero de elementos que se puede contener en el mismo
-    uint16_t write;     //Fin de la cola
-    uint16_t read;      //Comienzo de la cola
-    uint16_t n_written; //Numero de elementos presentes en la cola    
+    uint32_t size;      //Numero de elementos que se puede contener en el mismo
+    uint32_t write;     //Fin de la cola
+    uint32_t read;      //Comienzo de la cola
+    uint32_t n_written; //Numero de elementos presentes en la cola    
 }char_buffer_t;
 
 
-char_buffer_t create_cb (uint16_t n_elements);
+char_buffer_t create_cb (uint32_t n_elements);
 /* Recibe el numero de chars que va a tener el buffer
  * Crea el buffer y lo devuelve, listo para usar. */
 
@@ -38,10 +38,11 @@ int write_cb (char_buffer_t * cb, char last_in);
 char read_cb (char_buffer_t * cb, int* error);
 /* Recibe la direccion del buffer del cual se desea leer, y la direccion de un
  * int por el cual se indicara si hubo error.
+ * Si no se desease hacer control de errores, se puede enviar un puntero a NULL
  * Si hay aun cosas por leer en el buffer, devuelve lo primero en la cola y 
  * TRUE en el indicador de error.
  * De lo contrario, indica error con FALSE (el valor devuelto no tendra ningun
- * significado). */
+ * significado).*/
 
 
 int is_full_cb (char_buffer_t cb);

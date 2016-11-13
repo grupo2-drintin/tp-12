@@ -2,9 +2,9 @@
 #include <stdlib.h>
 
 
-char_buffer_t create_cb (uint16_t n_elements)
+char_buffer_t create_cb (uint32_t n_elements)
 {
-    char_buffer_t new_buffer={.size=n_elements, .n_written=0, .read=0, .write=0};
+    char_buffer_t new_buffer={.size=n_elements, .n_written=0, .read=4, .write=4};
     /* Inicializa el nuevo buffer con el tamano recibido, e indica que se encuen-
      * tra vacio actualmente. Read y write se deben inicializar obligatoriamente
      * en la misma posicion, aunque es indistinto en cual. */
@@ -70,11 +70,17 @@ char read_cb (char_buffer_t * cb, int* error)
             cb->read++;   //De lo contrario, avanza a la siguiente posicion
         }
     
-        *error=TRUE;      //Indica que no hubo error
+        if(error)       //Verifica que no se haya recibido puntero a null
+        {
+            *error=TRUE;    //Indica que no hubo error
+        }      
     }    
     else
     {
-        *error=FALSE;   //Si no se cumple la condicion inicial: error
+        if(error)       //Verifica que no se haya recibido puntero a null
+        {
+            *error=FALSE;   //Si no se cumple la condicion inicial: error
+        }
     }
     
     return first_in_line;
