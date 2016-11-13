@@ -1,20 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/* 
- * File:   main.c
- * Author: malu
- *
- * Created on 13 de noviembre de 2016, 17:40
- */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
 #include "events_kb.h"
+#include "nonblock.h"
 
 #define  ONE_MS    	1000	   // One mseg
 
@@ -48,11 +37,30 @@ int main()
     };
     
     start_read_kb();
-    pthread_t printing_thread;
-    pthread_create(&printing_thread, NULL, print_typing, excuse_pointers[get_next_event()-'a']);
-    stop_read_kb();
-
-    return (0);
+    char key;
+    while((key=get_next_event())!= '\n')
+    {
+        if (key >= 'a' && key <= 'q')
+        {
+            printf("%s", excuse_pointers[key-'a']);
+        }
+    }
+    
+    
+    /*pthread_t printing_thread;
+    
+    char i = get_next_event();
+    
+    while (1)
+    {    
+        i = get_next_event();
+        if (i>='a' && i<='q')
+        {
+            pthread_create(&printing_thread, NULL, print_typing, excuse_pointers[i-'a']);
+            //pthread_join(printing_thread, NULL);
+        }
+    }*/
+    return 0;
 }
 
 void * print_typing(void* start_of_string)  
@@ -61,8 +69,12 @@ void * print_typing(void* start_of_string)
     char key;                               //contiene caracter a imprimir
     while(key = ((char*)start_of_string)[i])  //repetir hasta que se llegue al terminador
     {               
-        usleep(100*ONE_MS);                 // 100ms * 
+        usleep(1000*ONE_MS);                 // 100ms * 
+        
+        nonblock(NB_DISABLE);
         putchar(key);
+        nonblock(NB_ENABLE);
+        
         i++;	
     }
 }
