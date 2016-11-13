@@ -1,50 +1,50 @@
 #include "events_kb.h"
-#include "nonblock.h"
-#include "char_buffer.h"
-#include <pthread.h>
-#include <stdio.h>
+
 
 #ifndef TRUE
 #define TRUE    1
 #define FALSE   0
 #endif //TRUE
 
-#define BUFFER_SIZE 200
+#define BUFFER_SIZE 200 //Tamano del buffer donde se contendran los eventos
 
-static void * read_kb_thread();
 
-static int exit=TRUE;
+static void * read_kb_thread(); //Predeclaracion
+
+static int keep_reading=TRUE;     
 static char_buffer_t buffer;
 
 
 void start_read_kb(void)
 {
-    nonblock(NB_ENABLE);
-    buffer=create_cb(BUFFER_SIZE);
-    pthread_t r_kb;
+    nonblock(NB_ENABLE);            //Desabilita el modo canonico de ingreso
     
-    pthread_create(&r_kb, NULL, read_kb_thread, NULL);
+    buffer=create_cb(BUFFER_SIZE);  //Buffer donde se guardaran los eventos
+    
+    pthread_t r_kb;
+    pthread_create(&r_kb, NULL, read_kb_thread, NULL);  //Comienza a leer el kb
 }
 
 
 
 static void * read_kb_thread()
+/* Thread de lectura de teclado */
 {
     char last_in;
     
-    while (exit)
+    while (keep_reading) //repite hasta que el buffer este lleno o se llame a stop
     {
         if(kbhit())
         {
-            last_in=getchar();
+            last_in=getchar();      //De haberse apretado una tecla, la obtiene
             
             if(!is_full_cb(buffer))
             {
-                write_cb(&buffer, last_in);
-            }
+                write_cb(&buffer, last_in); //Guarda el ultimo evento, si no 
+            }                               //esta lleno el buffer
             else
             {
-                exit=FALSE;
+                exit=FALSE;         
             }
         }
     }
@@ -52,13 +52,13 @@ static void * read_kb_thread()
 
 char get_next_event(void)
 {
-    int could_read;
+    int could_read; 
     
-    char next_event = read_cb(&buffer, &could_read);
+    char next_event = read_cb(&buffer, &could_read);  //Obtiene el ultimo evento
     
     if (!could_read)
     {
-        next_event=FALSE;
+        next_event=FALSE;                      //Si se indico error, devuelve 0 
     }
     
     return next_event;
@@ -68,7 +68,7 @@ char get_next_event(void)
 
 void stop_kb_read(void)
 {
-    exit=FALSE;
-    nonblock(NB_DISABLE);
-    free_cb(&buffer);
+    keep_reading=FALSE;     //Detiene el thread de lectura de teclado
+    nonblock(NB_DISABLE);   //Vuelve al modo canonico
+    free_cb(&buffer);       //Libera la memoria utilizada por el buffer
 }

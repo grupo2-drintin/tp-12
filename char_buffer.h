@@ -1,6 +1,25 @@
 #ifndef CHAR_BUFFER_H
 #define CHAR_BUFFER_H
 
+/* 
+ *  PROGRAMACION I
+ *
+ *  GRUPO 2
+ *
+ *  TRABAJO PRACTICO N 12 - EJERCICIO 1
+ *
+ *  CONSIGNA: Se debe implementar una librería para generar buffers circulares
+ * de caracteres. El mismo debe permitir:
+ * - Crear múltiples buffers;
+ * - Ingresar un nuevo dato al final,
+ * - sacar el primer dato de la cola,
+ * - indicar si el buffer se encuentra lleno.
+ *
+ *  FECHA DE ENTREGA: lunes 14 de noviembre de 2016
+ *
+ */
+
+
 #include <stdint.h>
 
 #ifndef TRUE        //Valores de TRUE y FALSE, con los que se indica el error
