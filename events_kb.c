@@ -38,13 +38,14 @@ static void * read_kb_thread()
         {
             last_in=getchar();      //De haberse apretado una tecla, la obtiene
             
+            
             if(!is_full_cb(buffer))
             {
                 write_cb(&buffer, last_in); //Guarda el ultimo evento, si no 
             }                               //esta lleno el buffer
             else
             {
-                exit=FALSE;         
+                keep_reading = FALSE;         
             }
         }
     }
@@ -66,7 +67,7 @@ char get_next_event(void)
 
 
 
-void stop_kb_read(void)
+void stop_read_kb(void)
 {
     keep_reading=FALSE;     //Detiene el thread de lectura de teclado
     nonblock(NB_DISABLE);   //Vuelve al modo canonico
